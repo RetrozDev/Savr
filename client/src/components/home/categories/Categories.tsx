@@ -1,21 +1,17 @@
-import { useState } from "react";
-
 import { fakeCategories } from "../../../data/fakeCategories";
+import { useCategory } from "../../../contexts/CategoryContext";
 import "./categories.css";
 
 export const Categories = () => {
-  const [selectedCategory, setSelectedCategory] = useState(
-    "f37c4a2b-6e8b-4df9-9228-2ad8c9c2d33a"
-  );
+  const { selectedCategory, setSelectedCategory } = useCategory();
+
   return (
     <div className="categories">
       {fakeCategories.map((category) => (
         <article
           key={category.uuid}
-          className={category.uuid === selectedCategory ? "selected" : ""}
-          onClick={() => {
-            setSelectedCategory(category.uuid);
-          }}
+          className={category.uuid === selectedCategory.uuid ? "selected" : ""}
+          onClick={() => setSelectedCategory(category)}
         >
           {category.emoji} • {category.name}
         </article>
