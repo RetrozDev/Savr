@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { useCategory } from "../../../contexts/CategoryContext";
 import { fakeRecipes } from "../../../data/fakeRecipes";
 import type { Recipe, Ingredient } from "../../../data/fakeRecipes";
-import './recipes.css'
+import "./recipes.css";
 
 export const Recipes = (): JSX.Element | null => {
   const { selectedCategory } = useCategory();
@@ -20,7 +20,8 @@ export const Recipes = (): JSX.Element | null => {
 
     return (
       <>
-        {ing.quantity} {ing.unit} {article} <span className="ingredient-name">{name}</span>
+        {ing.quantity} {ing.unit} {article}{" "}
+        <span className="ingredient-name">{name}</span>
       </>
     );
   };
@@ -29,17 +30,21 @@ export const Recipes = (): JSX.Element | null => {
     <div className="recipes">
       <h1>{selectedCategory.name}</h1>
 
-      {recipesInCategory.map((recipe: Recipe) => (
-        <article key={recipe.uuid}>
-          <img src={recipe.imgSrc} alt={recipe.name} />
-          <h2>{recipe.name}</h2>
-          <ul>
-            {recipe.ingredients.map((ing, i) => (
-              <li key={`${recipe.uuid}-ing-${i}`}>{formatIngredient(ing)}</li>
-            ))}
-          </ul>
-        </article>
-      ))}
+      {recipesInCategory.length > 0 ? (
+        recipesInCategory.map((recipe: Recipe) => (
+          <article key={recipe.uuid}>
+            <img src={recipe.imgSrc} alt={recipe.name} />
+            <h2>{recipe.name}</h2>
+            <ul>
+              {recipe.ingredients.map((ing, i) => (
+                <li key={`${recipe.uuid}-ing-${i}`}>{formatIngredient(ing)}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      ) : (
+        <h2>Aucune recette pour cette catégorie 😔</h2>
+      )}
     </div>
   );
 };

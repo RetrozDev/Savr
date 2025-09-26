@@ -1,7 +1,6 @@
-import  { type FC } from "react";
+import { type FC } from "react";
 import LogoIcon from "/logo.svg";
-import './navbar.css'
-import { Link } from "react-router";
+import "./navbar.css";
 
 export const Navbar: FC = () => {
   const isLoggedIn = false; // TODO: replace with  authentication logic
@@ -9,17 +8,32 @@ export const Navbar: FC = () => {
     <nav className="navbar">
       <img src={LogoIcon} alt="savr-logo" className="navbar-logo" />
       <div className="links">
-        <Link to="/" className="link">Accueil</Link>
-        <Link to="/about" className="link">À propos</Link>
-        <Link to="/recipes" className="link">Recettes</Link>
+        <a href="#categories">Catégories</a>
+        <a href="#recipes">Recettes</a>
+        <a href="#about">À propos</a>
+        <a href="#contact">Contact</a>
       </div>
       <div className="auth-links">
         {isLoggedIn ? (
-          <img src="https://avatar.iran.liara.run/public/31" alt="User Avatar" className="user-avatar" />
+          <img
+            src="https://avatar.iran.liara.run/public/31"
+            alt="User Avatar"
+            className="user-avatar"
+          />
         ) : (
           <>
-            <button onClick={() => window.location.href = "/login"} className="link">Se connecter</button>
-            <button onClick={() => window.location.href = "/register"} className="link">S'inscrire</button>
+            <button
+              onClick={() => (console.log("TO DO"))}
+              className="link"
+            >
+              Se connecter
+            </button>
+            <button
+              onClick={() => (console.log("TO DO"))}
+              className="link"
+            >
+              S'inscrire
+            </button>
           </>
         )}
       </div>

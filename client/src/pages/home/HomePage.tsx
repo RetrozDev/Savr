@@ -6,9 +6,27 @@ import { Recipes } from "../../components/home/recipes/Recipes";
 export const HomePage = () => {
   return (
     <main className="home-page">
-      <Hero />
-      <Categories />
-      <Recipes />
+      <section id="hero">
+        <Hero />
+      </section>
+
+      <section id="categories">
+        <Categories />
+      </section>
+
+      <section id="recipes">
+        <Recipes />
+      </section>
+
+      <section id="about">
+        <h2>À propos</h2>
+        <p>Ici tu présentes ton projet 👨‍🍳</p>
+      </section>
+
+      <section id="contact">
+        <h2>Contact</h2>
+        <p>Un petit formulaire ou juste ton email</p>
+      </section>
     </main>
   );
 };
