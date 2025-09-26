@@ -1,9 +1,10 @@
 import './homepage.css'
+import { Hero } from '../../components/hero/Hero'
 
 export const HomePage = () => {
     return (
         <main className="home-page">
-            <h1>Welcome to Savr!</h1>
+            <Hero />
         </main>
     )
 }
