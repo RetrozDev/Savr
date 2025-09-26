@@ -1,0 +1,30 @@
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 95%;
+  margin-top: 45px;
+  justify-content: center;
+
+  article {
+    background-color: var(--color-primary);
+    padding: 8px;
+    border-radius: 8px;
+    color: var(--color-muted);
+    font-weight: 600;
+    transition: background-color .2s linear;
+
+    &&:hover {
+      outline: 2px solid var(--color-accent);
+    }
+  }
+
+  article.selected {
+    background-color: var(--color-accent);
+    color: var(--color-text);
+
+    &&:hover {
+      outline: none;
+    }
+  }
+}
