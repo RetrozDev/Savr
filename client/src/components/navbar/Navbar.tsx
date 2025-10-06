@@ -4,10 +4,12 @@ import "./navbar.css";
 
 export const Navbar: FC = () => {
   const isLoggedIn = false; // TODO: replace with  authentication logic
+  const isHomePage = window.location.pathname === "/";
   return (
     <nav className="navbar">
       <img src={LogoIcon} alt="savr-logo" className="navbar-logo" />
       <div className="links">
+        {!isHomePage && <a href="/">Accueil</a>}
         <a href="#categories">Catégories</a>
         <a href="#recipes">Recettes</a>
         <a href="#about">À propos</a>
@@ -22,16 +24,10 @@ export const Navbar: FC = () => {
           />
         ) : (
           <>
-            <button
-              onClick={() => (console.log("TO DO"))}
-              className="link"
-            >
+            <button onClick={() => console.log("TO DO")} className="link">
               Se connecter
             </button>
-            <button
-              onClick={() => (console.log("TO DO"))}
-              className="link"
-            >
+            <button onClick={() => console.log("TO DO")} className="link">
               S'inscrire
             </button>
           </>

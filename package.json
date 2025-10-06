@@ -1,0 +1,23 @@
+{
+  "name": "savr",
+  "version": "1.0.0",
+  "description": "Savr is a french recipe website made for cooking lover",
+  "homepage": "https://github.com/RetrozDev/Savr#readme",
+  "bugs": {
+    "url": "https://github.com/RetrozDev/Savr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RetrozDev/Savr.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,yellow\" \"cd server && uvicorn src.main:app --reload --port 8000\" \"cd client && npm run dev\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

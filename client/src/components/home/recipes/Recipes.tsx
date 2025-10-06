@@ -26,13 +26,17 @@ export const Recipes = (): JSX.Element | null => {
     );
   };
 
+  const gotoRecipe = (recipeUuid: string): void => {
+    location.href = `/recipe/${recipeUuid}`;
+  };
+
   return (
     <div className="recipes">
       <h1>{selectedCategory.name}</h1>
 
       {recipesInCategory.length > 0 ? (
         recipesInCategory.map((recipe: Recipe) => (
-          <article key={recipe.uuid}>
+          <article key={recipe.uuid} onClick={() => gotoRecipe(recipe.uuid)}>
             <img src={recipe.imgSrc} alt={recipe.name} />
             <h2>{recipe.name}</h2>
             <ul>
