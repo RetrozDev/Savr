@@ -27,3 +27,4 @@ dist-ssr
 server/src/__pycache__
 server/src/models/__pycache__
 server/src/routes/__pycache__
+.env
