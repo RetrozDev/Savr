@@ -1,18 +1,4 @@
-export type Recipe = {
-  uuid: string;
-  name: string;
-  categoryUuid: string;
-  imgSrc: string;
-  cookingTime: number;
-  ingredients: Ingredient[];
-  steps: string[];
-};
-
-export type Ingredient = {
-  name: string;
-  quantity: number;
-  unit: string;
-};
+import type { Recipe } from "../types/recipe";
 
 export const fakeRecipes: Recipe[] = [
   {
