@@ -1,11 +1,11 @@
 import os
 from fastapi import Request, HTTPException, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import RedirectResponse
 import jwt
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.routes import recipes, categories, auth
+from src.routes import categories, ingredients
 from src.config.cors import cors
 
 SECRET_KEY = os.getenv("JWT_SECRET")  # Pour JWT
@@ -25,9 +25,10 @@ app.add_middleware(
 app.add_middleware(SessionMiddleware, secret_key=str(os.getenv("SESSION_SECRET")))
 
 # Routers
-app.include_router(recipes.router)
 app.include_router(categories.router)
+app.include_router(ingredients.router)
+
 
 @app.get("/")
 def root():
-    return {"message": "Hello from FastAPI!"}
+    return RedirectResponse(url="/docs")

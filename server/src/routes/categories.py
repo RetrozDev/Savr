@@ -4,6 +4,7 @@ from src.models.category import Category
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
+
 @router.get("/", response_model=List[dict])
 def get_categories():
     categories = Category.get_all()
