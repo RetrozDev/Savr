@@ -1,17 +1,54 @@
+import { useEffect, useState } from "react";
 import type { JSX } from "react";
 import { useCategory } from "../../../contexts/CategoryContext";
-import { fakeRecipes } from "../../../data/fakeRecipes";
-import type { Recipe, Ingredient } from "../../../data/fakeRecipes";
 import "./recipes.css";
+
+type Ingredient = {
+  uuid: string;
+  name: string;
+  quantity?: string;
+  unit?: string;
+  recipe_uuid?: string;
+};
+
+type Recipe = {
+  uuid: string;
+  name: string;
+  category_uuid: string;
+  img_src?: string;
+  cooking_time?: number;
+  steps?: string[];
+  ingredients: Ingredient[];
+};
 
 export const Recipes = (): JSX.Element | null => {
   const { selectedCategory } = useCategory();
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!selectedCategory) return;
+
+    const fetchRecipes = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/recipes");
+        if (!res.ok) throw new Error("Erreur lors du chargement des recettes");
+        const data: Recipe[] = await res.json();
+
+        // filtrer côté front par category_uuid
+        setRecipes(data.filter((r) => r.category_uuid === selectedCategory.uuid));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipes();
+  }, [selectedCategory]);
 
   if (!selectedCategory) return null;
-
-  const recipesInCategory = fakeRecipes.filter(
-    (r) => r.categoryUuid === selectedCategory.uuid
-  );
+  if (loading) return <p>Chargement...</p>;
 
   const formatIngredient = (ing: Ingredient): JSX.Element => {
     const name = ing.name.trim();
@@ -34,14 +71,16 @@ export const Recipes = (): JSX.Element | null => {
     <div className="recipes">
       <h1>{selectedCategory.name}</h1>
 
-      {recipesInCategory.length > 0 ? (
-        recipesInCategory.map((recipe: Recipe) => (
+      {recipes.length > 0 ? (
+        recipes.map((recipe: Recipe) => (
           <article key={recipe.uuid} onClick={() => gotoRecipe(recipe.uuid)}>
-            <img src={recipe.imgSrc} alt={recipe.name} />
+            {recipe.img_src && <img src={recipe.img_src} alt={recipe.name} />}
             <h2>{recipe.name}</h2>
             <ul>
               {recipe.ingredients.map((ing, i) => (
-                <li key={`${recipe.uuid}-ing-${i}`}>{formatIngredient(ing)}</li>
+                <li key={`${recipe.uuid}-ing-${i}`}>
+                  {formatIngredient(ing)}
+                </li>
               ))}
             </ul>
           </article>

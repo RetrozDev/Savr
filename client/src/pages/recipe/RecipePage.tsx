@@ -1,46 +1,87 @@
 import { useParams } from "react-router";
-import { useState, type JSX } from "react";
-import type { Ingredient, Recipe } from "../../data/fakeRecipes";
-import { fakeRecipes } from "../../data/fakeRecipes";
-import type { Category } from "../../types/category";
-import { fakeCategories } from "../../data/fakeCategories";
+import { useEffect, useState, type JSX } from "react";
 import { Navbar } from "../../components/navbar/Navbar";
-
 import "./recipepage.css";
 
-export const RecipePage = () => {
-  const { uuid } = useParams<{ uuid: string }>();
-  const recipe: Recipe | undefined = fakeRecipes.find(
-    (recipe) => recipe.uuid === uuid
-  );
-  const category: Category | undefined = fakeCategories.find(
-    (category) => category.uuid === recipe?.categoryUuid
-  );
+type Ingredient = {
+  uuid: string;
+  name: string;
+  quantity?: number;
+  unit?: string;
+  recipe_uuid?: string;
+};
 
+type Recipe = {
+  uuid: string;
+  name: string;
+  category_uuid: string;
+  img_src?: string;
+  cooking_time?: number;
+  steps?: string[];
+  ingredients: Ingredient[];
+};
+
+type Category = {
+  uuid: string;
+  name: string;
+};
+
+export const RecipePage = (): JSX.Element => {
+  const { uuid } = useParams<{ uuid: string }>();
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [loading, setLoading] = useState(true);
   const [servingQuantity, setServingQuantity] = useState<number>(1);
 
-    const formatIngredient = (ing: Ingredient): JSX.Element => {
-      const name = ing.name.trim();
-      const isVowel = /^[aeiouyàâäéèêëîïôöùûüœæ]/i.test(name);
-      const article = isVowel ? "d'" : "de";
-  
-      return (
-        <>
-          {ing.quantity * servingQuantity} {ing.unit} {article}{" "}
-          <span className="ingredient-name">{name}</span>
-        </>
-      );
+  useEffect(() => {
+    if (!uuid) return;
+
+    const fetchRecipe = async () => {
+      try {
+        // Récupère la recette avec ses ingrédients
+        const resRecipe = await fetch(`http://localhost:8000/recipes/${uuid}`);
+        if (!resRecipe.ok) throw new Error("Recette introuvable");
+        const dataRecipe: Recipe = await resRecipe.json();
+        setRecipe(dataRecipe);
+
+        // Récupère la catégorie
+        const resCategory = await fetch(`http://localhost:8000/categories/${dataRecipe.category_uuid}`);
+        if (resCategory.ok) {
+          const dataCategory: Category = await resCategory.json();
+          setCategory(dataCategory);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
-  const formatMinutes = (time: number): string => {
-    const hours = Math.floor(time / 60);
-    const minutes = time % 60;
-    if (hours > 0) {
-      return `${hours}h ${minutes} minutes`;
-    }
-    return `${minutes} minutes`;
+
+    fetchRecipe();
+  }, [uuid]);
+
+  if (loading) return <p>Chargement...</p>;
+  if (!recipe) return <p>Recette introuvable</p>;
+
+  const formatIngredient = (ing: Ingredient): JSX.Element => {
+    const name = ing.name.trim();
+    const isVowel = /^[aeiouyàâäéèêëîïôöùûüœæ]/i.test(name);
+    const article = isVowel ? "d'" : "de";
+
+    return (
+      <>
+        {ing.quantity && ing.quantity * servingQuantity} {ing.unit} {article}{" "}
+        <span className="ingredient-name">{name}</span>
+      </>
+    );
   };
 
-  if (!recipe) return <p>Recette introuvable</p>;
+  const formatMinutes = (time?: number): string => {
+    if (!time) return "N/A";
+    const hours = Math.floor(time / 60);
+    const minutes = time % 60;
+    return hours > 0 ? `${hours}h ${minutes} minutes` : `${minutes} minutes`;
+  };
 
   return (
     <main className="recipe-page">
@@ -48,64 +89,62 @@ export const RecipePage = () => {
       <section className="recipe">
         <header>
           <h1>{recipe.name}</h1>
-          <div className="img-wrapper">
-            <img src={recipe.imgSrc} alt={recipe.name} />
-          </div>
+          {recipe.img_src && (
+            <div className="img-wrapper">
+              <img src={recipe.img_src} alt={recipe.name} />
+            </div>
+          )}
         </header>
-        <div className="steps">
-          <h2>étapes :</h2>
-          <ul>
-            {recipe.steps.map((step) => (
-              <li>
-                {step} <input type="checkbox" name="" id="" />
-              </li>
-            ))}
-          </ul>
-        </div>
+        {recipe.steps && recipe.steps.length > 0 && (
+          <div className="steps">
+            <h2>Étapes :</h2>
+            <ul>
+              {recipe.steps.map((step, idx) => (
+                <li key={idx}>
+                  {step} <input type="checkbox" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       <section className="recipe-infos">
         <article className="main-infos">
           <p>
-            <span>Categorie: </span>
+            <span>Catégorie: </span>
             {category?.name}
           </p>
           <p>
-            <span>Temps de prepation :</span>
-            {formatMinutes(recipe.cookingTime)}
+            <span>Temps de préparation :</span>
+            {formatMinutes(recipe.cooking_time)}
           </p>
         </article>
 
-        <article className="ingredients">
-          <div className="title">
-            <h2>
-              Ingredients pour {servingQuantity} personne
-              {servingQuantity > 1 ? "s" : ""}
-            </h2>
-            <div className="controls-wrapper">
-              <button
-                onClick={() => {
-                  if (servingQuantity > 1) {
-                    setServingQuantity(servingQuantity - 1);
-                  }
-                }}
-              >
-                -
-              </button>
-              {servingQuantity}
-              <button onClick={() => setServingQuantity(servingQuantity + 1)}>
-                +
-              </button>
+        {recipe.ingredients && recipe.ingredients.length > 0 && (
+          <article className="ingredients">
+            <div className="title">
+              <h2>
+                Ingrédients pour {servingQuantity} personne
+                {servingQuantity > 1 ? "s" : ""}
+              </h2>
+              <div className="controls-wrapper">
+                <button
+                  onClick={() => servingQuantity > 1 && setServingQuantity(servingQuantity - 1)}
+                >
+                  -
+                </button>
+                {servingQuantity}
+                <button onClick={() => setServingQuantity(servingQuantity + 1)}>+</button>
+              </div>
             </div>
-          </div>
-          <ul>
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index}>
-                {formatIngredient(ingredient)}
-              </li>
-            ))}
-          </ul>
-        </article>
+            <ul>
+              {recipe.ingredients.map((ing, idx) => (
+                <li key={idx}>{formatIngredient(ing)}</li>
+              ))}
+            </ul>
+          </article>
+        )}
       </section>
     </main>
   );
