@@ -28,3 +28,4 @@ server/src/__pycache__
 server/src/models/__pycache__
 server/src/routes/__pycache__
 .env
+server/src/config/__pycache__

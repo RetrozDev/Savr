@@ -1,23 +1,20 @@
+from src.helpers.client import supabase
 from fastapi import APIRouter, HTTPException
 from typing import List
-from src.models.categorie import Category
+from src.models.category import Category
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
-CATEGORIES = [
-    Category(uuid="dessert", name="Dessert", emoji="🍰"),
-    Category(uuid="starter", name="Entrée", emoji="🥗"),
-    Category(uuid="main", name="Plat principal", emoji="🍲"),
-    Category(uuid="drink", name="Boisson", emoji="🥤"),
-    Category(uuid="snack", name="Snack", emoji="🍿")
-]
 
 @router.get("/",response_model=List[dict])
-def get_gategories():
-    return [category.to_dict() for category in CATEGORIES]
+def get_categories():
+    response = supabase.table("categories").select("*").execute()
+    if not response.data:  # type: ignore
+        raise HTTPException(status_code=404, detail="No categories found")
+    return  response.data # type: ignore
 
-@router.get("/{category_uuid}", response_model=dict)
-def get_recipe(category_uuid: str):
-    for category in CATEGORIES:
-        if category.uuid == category_uuid:
-            return category.to_dict()
-    raise HTTPException(status_code=404, detail="category not found")
+@router.get("/{uuid}", response_model=dict)
+def get_category(uuid: str):
+    response = supabase.table("categories").select("*").eq("uuid", uuid).single().execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail=f"Category with uuid {uuid} not found")
+    return response.data

@@ -1,3 +1,4 @@
+
 class Category:
     def __init__(self, uuid: str, name: str, emoji: str):
         self.uuid = uuid
@@ -10,3 +11,4 @@ class Category:
             "name": self.name,
             "emoji": self.emoji
         }
+    
