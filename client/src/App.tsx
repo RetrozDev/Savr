@@ -1,10 +1,13 @@
 import { Outlet } from "react-router";
 import { CategoryProvider } from "./contexts/CategoryContext";
+import { UserProvider } from "./contexts/UserContext";
 
 export const App = () => {
   return (
-    <CategoryProvider>
-      <Outlet />
-    </CategoryProvider>
+    <UserProvider>
+      <CategoryProvider>
+        <Outlet />
+      </CategoryProvider>
+    </UserProvider>
   );
 };
