@@ -1,14 +1,16 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import { createClient } from "@supabase/supabase-js";
-
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("supabaseUrl or supabaseAnonKey is missing");
-}
-
+// eslint-disable-next-line react-refresh/only-export-components
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface User {
@@ -32,12 +34,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data?.user) {
-        const u = data.user;
+        const user = data.user;
         setUser({
-          id: u.id,
-          email: u.email!,
-          name: u.user_metadata.full_name,
-          picture: u.user_metadata.avatar_url,
+          id: user.id,
+          email: user.email!,
+          name: user.user_metadata.full_name,
+          picture: user.user_metadata.avatar_url,
         });
       }
     });
